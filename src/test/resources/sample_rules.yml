@@ -1,0 +1,12 @@
+ruleDefinitions: 
+   - 
+     groupid: 'queue1rules'
+     attribute_name_delimiter: '.'
+     conditions:
+        condition1: '$(00098,2334)[1] EQUALS abcde'
+        condition2: '$(00098,2335).(00098,2333) CONTAINS abcde'
+        condition3: '$(00098,2336) GREATER_THAN 5'
+        condition4: '$(00098,2337) EQUALS abcder'
+     rules: 
+        relevance_rule: 'condition1 || condition2 && ( condition3 || condition4 )'
+     
