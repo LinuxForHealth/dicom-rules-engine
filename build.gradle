@@ -58,7 +58,110 @@ dependencies {
    
 }
 
-tasks.named('test') {
-    // Use junit platform for unit tests.
-    useJUnitPlatform()
+
+test {
+     useJUnitPlatform()
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+publishing {
+
+  repositories {
+    maven {
+      name = "OSSRH"
+      def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+      url = isReleaseVersion ? releaseRepo : snapshotRepo
+      
+      credentials {
+        username = System.getenv("MAVEN_USERNAME")
+        password = System.getenv("MAVEN_PASSWORD")
+      }
+    }
+  }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+javadoc.failOnError = false
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+
+
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            groupId = group
+            artifactId 'hl7v2-fhir-converter'
+            version = version
+            
+            pom {
+                    name = "dicom-rules-engine"
+                    description = "DICOM rules engine is a Java based library that enables writing filtering rules for DICOM Study."
+                    url = "https://github.com/LinuxForHealth/dicom-rules-engine"
+                    licenses {
+                      license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                      }
+                    }
+                    developers {
+                      developer {
+                        id = "pbhallam"
+                        
+                      }
+                    }
+                    scm {
+                      url = "https://github.com/LinuxForHealth/dicom-rules-engine.git"
+                     
+                    }
+                  }
+           
+        }
+    }
+}
+
+
+signing {
+if (isReleaseVersion ) {
+    def signingKeyId = System.getenv("signingKeyId")
+    def signingKey = System.getenv("signingKey")
+    def signingPassword = System.getenv("signingPassword")
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    }   
+    sign publishing.publications.mavenPublication
+}
+
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+}
+
