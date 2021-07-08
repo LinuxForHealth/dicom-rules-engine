@@ -13,6 +13,7 @@ plugins {
 
 }
 
+
 jacoco {
   toolVersion = '0.8.6'
 }
@@ -24,6 +25,7 @@ targetCompatibility = 11
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
 }
+
 
 
 group = 'io.github.linuxforhealth'
