@@ -136,7 +136,7 @@ publishing {
                 classifier "javadoc"
             }
             groupId = group
-            artifactId 'hl7v2-fhir-converter'
+            artifactId 'dicom-rules-engine'
             version = version
             
             pom {
