@@ -12,7 +12,9 @@ plugins {
     id 'signing'
 
 }
-
+jacoco {
+  toolVersion = '0.8.6'
+}
 group = 'io.github.linuxforhealth'
 version = (findProperty('version') == 'unspecified') ? '1.0.0-SNAPSHOT' : version
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
