@@ -8,8 +8,6 @@ package io.github.linuxforhealth.rules.dicom;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -123,38 +121,6 @@ class DicomRulesEvaluatorTest {
 
     }
 
-  }
-
-
-  @Test
-  public void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_false_study_2()
-      throws Exception {
-    String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
-        + "      \"groupid\": \"queue1rules\",\n" + "      \"conditions\": {\n"
-        + "        \"condition1\": \"$00080018 EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150800481.27482048.30798145\",\n"
-        + "        \"condition2\": \"$0020000E EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150758591.96842950.07877442\"\n"
-        + "            },\n" + "      \"rules\": {\n"
-        + "        \"relevance_rule\": \"condition1 && condition2 \"\n" + "      }\n" + "    }\n"
-        + "  ]\n" + "}";
-
-    System.out.println(rule);
-    File ruleFile = new File(tempFolder, "rule1.json");
-    FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
-    File study = new File("/Users/pbhallam@us.ibm.com/Downloads/series-000001/");
-
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    LocalTime start = LocalTime.now();
-    for (File f : study.listFiles()) {
-      LocalTime l1 = LocalTime.now();
-      RulesEvaluationResult results = eval.evaluateRules(f);
-      // assertThat(results.getResult().get("relevance_rule")).isNull();
-      LocalTime l2 = LocalTime.now();
-      // System.out.println("file :" + f.getAbsolutePath() + " result: "
-      // + results.getResultOfRule("queue1rules", "relevance_rule") + " time"
-      // + l1.until(l2, ChronoUnit.MILLIS));
-    }
-    LocalTime end = LocalTime.now();
-    System.out.println(start.until(end, ChronoUnit.MILLIS) + " files:" + study.listFiles().length);
   }
 
 
