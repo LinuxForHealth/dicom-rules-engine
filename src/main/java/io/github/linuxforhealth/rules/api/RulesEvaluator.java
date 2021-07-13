@@ -21,12 +21,14 @@ import io.github.linuxforhealth.rules.util.RuleParser;
  */
 public class RulesEvaluator {
 
+  private static final String LIST_OF_RULES_CANNOT_BE_NULL = "list of rules cannot be null";
+
   private RuleEngine engine;
 
   private ImmutableList<Rule> rules;
 
   public RulesEvaluator(List<Rule> rules) {
-    Preconditions.checkArgument(rules != null, "list of rules cannot be null");
+    Preconditions.checkArgument(rules != null, LIST_OF_RULES_CANNOT_BE_NULL);
     this.rules = ImmutableList.copyOf(rules);
     this.engine = new RuleEngine(this.rules);
   }
@@ -34,9 +36,17 @@ public class RulesEvaluator {
 
   public RulesEvaluator(File rulesFile) {
     Preconditions.checkArgument(rulesFile != null, "rulesFile cannot be null");
-    List<Rule> rules = RuleParser.loadRulesFromFile(rulesFile);
-    Preconditions.checkArgument(rules != null, "list of rules cannot be null");
-    this.rules = ImmutableList.copyOf(rules);;
+    var localrules = RuleParser.loadRulesFromFile(rulesFile);
+    Preconditions.checkArgument(localrules != null, LIST_OF_RULES_CANNOT_BE_NULL);
+    this.rules = ImmutableList.copyOf(localrules);
+    this.engine = new RuleEngine(this.rules);
+  }
+
+  public RulesEvaluator(String rulesJson, Format format) {
+    Preconditions.checkArgument(rulesJson != null, "rulesJson cannot be null");
+    var localrules = RuleParser.loadRules(rulesJson, format);
+    Preconditions.checkArgument(localrules != null, LIST_OF_RULES_CANNOT_BE_NULL);
+    this.rules = ImmutableList.copyOf(localrules);
     this.engine = new RuleEngine(this.rules);
   }
 
