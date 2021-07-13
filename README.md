@@ -10,6 +10,41 @@ The FHIR Converter has the following dependencies:
 * JDK 11 or later
 * Gradle 
 
+Note: The DICOM rules engine includes a Gradle Wrapper, so a local Gradle install is not required.
+
+Clone and build the project:
+```
+git clone git@github.com:LinuxForHealth/dicom-rules-engine.git
+cd dicom-rules-engine
+./gradlew build
+```
+
+## Using The DICOM Rules Engine In A Java Application
+
+The DICOM rules engine library is available as a maven dependency. 
+
+Library Coordinates
+```
+groupId = io.github.linuxforhealth
+artifactId = dicom-rules-engine
+version = 1.0.0-alpha
+```
+
+Maven dependency
+```
+<dependency>
+  <groupId>io.github.linuxforhealth</groupId>
+  <artifactId>dicom-rules-engine</artifactId>
+  <version>1.0.0-alpha</version>
+</dependency>
+```
+
+Gradle dependency:
+```
+    implementation 'io.github.linuxforhealth:dicom-rules-engine:1.0.0-alpha'
+```     
+
+
 ### Usage
 Example sample rule file:
 
