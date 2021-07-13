@@ -5,7 +5,7 @@ The LinuxForHealth DICOM rules engine is a Java based library that enables writi
 
 ## Development Quickstart
 
-The FHIR Converter has the following dependencies:
+The DICOM rules engine has the following dependencies:
 
 * JDK 11 or later
 * Gradle 
