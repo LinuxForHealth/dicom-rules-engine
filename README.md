@@ -10,6 +10,46 @@ The FHIR Converter has the following dependencies:
 * JDK 11 or later
 * Gradle 
 
+### Usage
+Example sample rule file:
+
+
+```json
+{
+  "ruleDefinitions": [
+    {
+      "groupid": "queue1rules",
+      "conditions": {
+        "condition1": "$00080018 EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150800481.27482048.30798145",
+        "condition2": "$0020000E EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150758591.96842950.07877442"
+            },
+      "rules": {
+        "relevance_rule": "condition1 && condition2"
+      }
+    }
+  ]
+}
+```
+If rules are stored in rules file, example:rules.json
+
+```
+    File ruleFile = new File(<path to rules.json>);
+    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.evaluateRules(study); // provide path to DICOM study directory
+    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+
+```
+
+If JSON representation of rules are read and stored in String object rulesDefination
+
+```
+   
+    DicomRulesEvaluator eval = new DicomRulesEvaluator(rulesDefination, Format.JSON);
+    RulesEvaluationResult results = eval.evaluateRules(study); // provide path to DICOM study directory
+    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+
+```
+
 
 # Introduction:
 The purpose of the rule engine is to provide mechanism to specify conditions to identify /filter DICOM studies for conditional processing based on preconfigured rules. 
@@ -37,12 +77,14 @@ The rule will evaluate a DICOM study and return the evaluation result.
       - Rule: Each rule is defined using conditions, where conditions are joined using &&/|| and can be nested using ().   
 
  ## Structure of a DICOM Condition
-   ### Condition
+ ### Condition
+   
     * variable: DICOM tag example: 00081030,    * 
     * operator: condition operator to use for this condition, details below.
     * match_value: value/values for matching
    
   Supported DICOM Data element value type, for match_value/match_values.
+  
    * String
    * Integer
    * List
@@ -64,6 +106,7 @@ The rule will evaluate a DICOM study and return the evaluation result.
     * NOT_IN_CONTAINS - DICOM string tag value does not contains (ignore case) any of the values provided in the rule.
  
  ## List of supported Integer type tag operators
+ 
     * EQUAL_TO - DICOM integer tag value is equal to the values provided in the rule.
     * GREATER_THAN  - DICOM integer tag value is greater than the values provided in the rule.
     * LESS_THAN - DICOM integer tag value is less than the values provided in the rule.
@@ -71,6 +114,7 @@ The rule will evaluate a DICOM study and return the evaluation result.
     * LESS_OR_EQUAL - DICOM integer tag value is less than or equal the values provided in the rule.
  
  ## List of supported List type tag operators
+ 
     * EMPTY - DICOM tag value of list type is empty.
     * NOT_EMPTY - DICOM tag value of list type is not empty.
     * ANY_CONTAINS -  Any of the list of values for a DICOM tag contains value provided in the rule.
@@ -88,20 +132,4 @@ The rule will evaluate a DICOM study and return the evaluation result.
     * CONTAINS_ALL- List of values for a DICOM tag contain (match is case sensitive) all the values provided in the rule.
     
 
-## Sample rules
-```json
-{
-  "ruleDefinitions": [
-    {
-      "groupid": "queue1rules",
-      "conditions": {
-        "condition1": "$00080018 EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150800481.27482048.30798145",
-        "condition2": "$0020000E EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150758591.96842950.07877442"
-            },
-      "rules": {
-        "relevance_rule": "condition1 && condition2"
-      }
-    }
-  ]
-}
-```
+
