@@ -10,16 +10,16 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.github.linuxforhealth.rules.api.Condition;
+import io.github.linuxforhealth.rules.condition.predicate.RuleBiPredicate;
 import io.github.linuxforhealth.rules.condition.variable.Variable;
-import io.github.linuxforhealth.rules.conditions.predicate.RuleBiPredicate;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 
 public class SimpleBiCondition implements Condition {
-  private static final Logger LOGGER = LoggerFactory.getLogger(CompositeCondition.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleBiCondition.class);
 
 
   private Variable factVariable;
@@ -64,7 +64,7 @@ public class SimpleBiCondition implements Condition {
 
 
   @Override
-  public boolean evaluate(ContextValues attributes) {
+  public boolean evaluate(DataValues attributes) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Evaluating condition {} for attributes {} ", this, attributes);
     }
@@ -99,11 +99,13 @@ public class SimpleBiCondition implements Condition {
     return ConditionType.SIMPLE;
   }
 
+
+
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("Variable", factVariable)
-        .append("ValueToMatch", matchConstant).append("RuleBiPredicate", conditionOperator)
-        .toString();
+    return "SimpleBiCondition [factVariable=" + factVariable + ", matchConstant=" + matchConstant
+        + ", conditionOperator=" + conditionOperator + "]";
   }
+
 
 }

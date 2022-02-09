@@ -9,13 +9,12 @@ package io.github.linuxforhealth.rules.condition.variable;
 
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import io.github.linuxforhealth.rules.condition.Specification;
 import io.github.linuxforhealth.rules.condition.VariableUtils;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 import io.github.linuxforhealth.rules.fact.ValueType;
 
 
@@ -46,7 +45,7 @@ public class SimpleVariable extends AbstractVariable {
   }
 
   @Override
-  public Optional<ValueType> extractAttribute(ContextValues attributes) {
+  public Optional<ValueType> extractAttribute(DataValues attributes) {
     Optional<ValueType> val = this.spec.getAttribute(attributes, null);
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Returning value {} for context {} for specs {}", val, attributes, this.spec);
@@ -57,7 +56,7 @@ public class SimpleVariable extends AbstractVariable {
 
 
   @Override
-  protected Optional<Object> fetchValue(ContextValues attributes, Class<?> klass) {
+  protected Optional<Object> fetchValue(DataValues attributes, Class<?> klass) {
     Optional<ValueType> optionalAttr = extractAttribute(attributes);
     Object value = null;
     if (optionalAttr.isPresent()) {
@@ -69,7 +68,8 @@ public class SimpleVariable extends AbstractVariable {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("spec", spec).toString();
+    return "SimpleVariable [spec=" + spec + "]";
   }
+
 
 }

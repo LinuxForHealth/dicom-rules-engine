@@ -13,18 +13,39 @@ package io.github.linuxforhealth.rules.api;
  *
  */
 public class RuleEvaluationResult {
-  private boolean ruleSuccess;
+  private boolean success;
   private String ruleIdentifier;
   private String factIdentifier;
+  private Throwable exception;
 
-  public RuleEvaluationResult(boolean ruleSuccess, String ruleIdentifier, String factIdentifier) {
-    this.ruleSuccess = ruleSuccess;
+  /**
+   * 
+   * @param isSuccess
+   * @param ruleIdentifier
+   * @param factIdentifier
+   */
+  public RuleEvaluationResult(boolean isSuccess, String ruleIdentifier, String factIdentifier) {
+    this.success = isSuccess;
     this.ruleIdentifier = ruleIdentifier;
     this.factIdentifier = factIdentifier;
   }
 
-  public boolean isRuleSuccess() {
-    return ruleSuccess;
+  /**
+   * 
+   * @param exception
+   * @param ruleIdentifier
+   * @param factIdentifier
+   */
+  public RuleEvaluationResult(Throwable exception, String ruleIdentifier, String factIdentifier) {
+    this.success = false;
+    this.exception = exception;
+    this.ruleIdentifier = ruleIdentifier;
+    this.factIdentifier = factIdentifier;
+  }
+
+
+  public boolean isSuccess() {
+    return success;
   }
 
 
@@ -35,6 +56,16 @@ public class RuleEvaluationResult {
 
   public String getFactIdentifier() {
     return factIdentifier;
+  }
+
+  public Throwable getException() {
+    return exception;
+  }
+
+  @Override
+  public String toString() {
+    return "RuleEvaluationResult [success=" + success + ", ruleIdentifier=" + ruleIdentifier
+        + ", factIdentifier=" + factIdentifier + ", exception=" + exception + "]";
   }
 
 

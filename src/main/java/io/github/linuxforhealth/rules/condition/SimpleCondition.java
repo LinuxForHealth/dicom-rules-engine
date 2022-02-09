@@ -6,12 +6,12 @@
 package io.github.linuxforhealth.rules.condition;
 
 import java.util.List;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.github.linuxforhealth.rules.api.Condition;
+import io.github.linuxforhealth.rules.condition.predicate.RulePredicate;
 import io.github.linuxforhealth.rules.condition.variable.Variable;
-import io.github.linuxforhealth.rules.conditions.predicate.RulePredicate;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 
 public class SimpleCondition implements Condition {
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCondition.class);
@@ -29,14 +29,14 @@ public class SimpleCondition implements Condition {
 
 
 
-  public SimpleCondition(Variable var, String operator) {
-    this(var, RulePredicate.valueOf(operator));
+  public SimpleCondition(Variable varible, String operator) {
+    this(varible, RulePredicate.valueOf(operator));
   }
 
 
 
   @Override
-  public boolean evaluate(ContextValues attributes) {
+  public boolean evaluate(DataValues attributes) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.info("Evaluating condition {} for attributes {} ", this, attributes);
     }
@@ -44,14 +44,14 @@ public class SimpleCondition implements Condition {
         this.factVariable.extractVariableValue(attributes, conditionOperator.getKlassT());
 
     boolean result = false;
-    if (conditionOperator != null) {
+
       if (var1Values.isEmpty()) {
         result = conditionOperator.getPredicate().test(null);
       } else {
         result = var1Values.stream().anyMatch(a -> conditionOperator.getPredicate().test(a));
 
       }
-    }
+
     if (LOGGER.isDebugEnabled()) {
       LOGGER.info("returning result  {} for condition {} for attributes {} ", result, this,
           attributes);
@@ -67,9 +67,13 @@ public class SimpleCondition implements Condition {
   }
 
 
+
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("Variable", factVariable)
-        .append("RuleBiPredicate", conditionOperator).toString();
+    return "SimpleCondition [factVariable=" + factVariable + ", conditionOperator="
+        + conditionOperator + "]";
   }
+
+
+
 }

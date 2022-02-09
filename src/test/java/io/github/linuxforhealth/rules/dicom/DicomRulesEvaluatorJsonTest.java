@@ -8,10 +8,13 @@ package io.github.linuxforhealth.rules.dicom;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import io.github.linuxforhealth.rules.api.RulesEvaluationResult;
+import io.github.linuxforhealth.rules.eval.DicomJsonRulesEvaluator;
+import io.github.linuxforhealth.rules.fact.DicomJsonFact;
 
 class DicomRulesEvaluatorJsonTest {
 
@@ -20,7 +23,7 @@ class DicomRulesEvaluatorJsonTest {
 
 
   @Test
-  public void evaluate_compound_condition_result_simple_string_type_to_true() throws Exception {
+  void evaluate_compound_condition_result_simple_string_type_to_true() throws Exception {
     String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
         + "      \"groupid\": \"queue1rules\",\n" + "      \"conditions\": {\n"
         + "        \"condition1\": \"$00080005 EQUALS ISO_IR192\",\n"
@@ -28,19 +31,19 @@ class DicomRulesEvaluatorJsonTest {
         + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
         + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     String json = getJSON();
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(json);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+    DicomJsonRulesEvaluator eval = new DicomJsonRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new DicomJsonFact("", json));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isTrue();
 
   }
 
 
   @Test
-  public void evaluate_compound_condition_result_simple_number_type_to_true() throws Exception {
+  void evaluate_compound_condition_result_simple_number_type_to_true() throws Exception {
     String rule =
         "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n" + "      \"groupid\": \"queue1rules\",\n"
             + "      \"conditions\": {\n" + "        \"condition1\": \"$00201206 EQUAL_TO 4\",\n"
@@ -48,13 +51,13 @@ class DicomRulesEvaluatorJsonTest {
             + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
             + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     String json = getJSON();
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(json);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+    DicomJsonRulesEvaluator eval = new DicomJsonRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new DicomJsonFact("", json));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isTrue();
 
   }
 
@@ -70,13 +73,13 @@ class DicomRulesEvaluatorJsonTest {
             + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
             + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     String json = getJSON();
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(json);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isFalse();
+    DicomJsonRulesEvaluator eval = new DicomJsonRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new DicomJsonFact("", json));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isFalse();
 
   }
 
@@ -90,19 +93,19 @@ class DicomRulesEvaluatorJsonTest {
             + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
             + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     String json = getJSON();
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(json);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+    DicomJsonRulesEvaluator eval = new DicomJsonRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new DicomJsonFact("", json));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isTrue();
 
   }
 
 
   @Test
-  public void loading_rules_with_incorrect_condition_fails() throws Exception {
+  void loading_rules_with_incorrect_condition_fails() throws Exception {
     String rule =
         "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n" + "      \"groupid\": \"queue1rules\",\n"
             + "      \"conditions\": {\n" + "        \"condition1\": \"$00201206 EQUAL_TO 4.0\",\n"
@@ -110,11 +113,11 @@ class DicomRulesEvaluatorJsonTest {
             + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
             + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
 
     org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
-      new DicomRulesEvaluator(ruleFile);
+      new DicomJsonRulesEvaluator(ruleFile);
     });
 
 
@@ -124,27 +127,37 @@ class DicomRulesEvaluatorJsonTest {
 
 
   @Test
-  public void evaluate_compound_condition_result_sq_type() throws Exception {
+  void evaluate_compound_condition_result_sq_type() throws Exception {
     String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
         + "      \"groupid\": \"queue1rules\",\n" + "      \"conditions\": {\n"
         + "        \"condition1\": \"$00101002.00100020 EQUALS 54321\",\n"
         + "        \"condition2\": \"$00201208 EQUAL_TO 942\"\n" + "            },\n"
-        + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
+        + "      \"rules\": {\n" + "        \"relevance_rule1\": \"condition1 && condition2 \"\n"
         + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     String json = getJSON();
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(json);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+    DicomJsonRulesEvaluator eval = new DicomJsonRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new DicomJsonFact("123", json));
+
+    assertThat(results.getResultOfRule("relevance_rule1", "queue1rules").isSuccess()).isTrue();
+
+
 
   }
 
 
+  private File ruleFile() {
+    String uid = UUID.randomUUID().toString();
+    File ruleFile = new File(tempFolder, "rule1" + uid + ".json");
+    return ruleFile;
+  }
+
+
   @Test
-  public void evaluate_compound_condition_result_simple_string_type_with_multiple_values_to_true()
+  void evaluate_compound_condition_result_simple_string_type_with_multiple_values_to_true()
       throws Exception {
     String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
         + "      \"groupid\": \"queue1rules\",\n" + "      \"conditions\": {\n"
@@ -153,13 +166,13 @@ class DicomRulesEvaluatorJsonTest {
         + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
         + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     String json = getJSON();
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(json);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+    DicomJsonRulesEvaluator eval = new DicomJsonRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new DicomJsonFact("", json));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isTrue();
 
   }
 
@@ -173,13 +186,13 @@ class DicomRulesEvaluatorJsonTest {
         + "      \"rules\": {\n" + "        \"relevance_rule\": \"condition1 && condition2 \"\n"
         + "      }\n" + "    }\n" + "  ]\n" + "}";
 
-    File ruleFile = new File(tempFolder, "rule1.json");
+    File ruleFile = ruleFile();
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     String json = getJSON();
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(json);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isFalse();
+    DicomJsonRulesEvaluator eval = new DicomJsonRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new DicomJsonFact("", json));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isFalse();
 
   }
 

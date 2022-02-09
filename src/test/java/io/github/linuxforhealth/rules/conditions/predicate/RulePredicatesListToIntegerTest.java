@@ -11,6 +11,7 @@ import java.util.function.BiPredicate;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import io.github.linuxforhealth.rules.condition.predicate.RulePredicateDefinitions;
 
 
 class RulePredicatesListToIntegerTest {

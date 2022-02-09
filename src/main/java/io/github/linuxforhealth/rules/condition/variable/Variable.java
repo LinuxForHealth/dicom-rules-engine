@@ -10,7 +10,7 @@ package io.github.linuxforhealth.rules.condition.variable;
 import java.util.List;
 import java.util.Optional;
 import io.github.linuxforhealth.rules.condition.Specification;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 import io.github.linuxforhealth.rules.fact.ValueType;
 
 
@@ -27,8 +27,8 @@ public interface Variable {
   List<Specification> getSpec();
 
 
-  List<Object> extractVariableValue(ContextValues attributes, Class<?> klass);
+  List<Object> extractVariableValue(DataValues attributes, Class<?> klass);
 
-  Optional<ValueType> extractAttribute(ContextValues attributes);
+  Optional<ValueType> extractAttribute(DataValues attributes);
 
 }

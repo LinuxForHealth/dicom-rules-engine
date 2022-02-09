@@ -3,9 +3,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package io.github.linuxforhealth.rules.condition;
+package io.github.linuxforhealth.rules.api;
 
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.condition.CompositeCondition;
+import io.github.linuxforhealth.rules.condition.CompositionType;
+import io.github.linuxforhealth.rules.condition.ConditionType;
+import io.github.linuxforhealth.rules.fact.DataValues;
 
 /**
  * 
@@ -22,7 +25,7 @@ public interface Condition {
    * @param contextValues - Map of String, {@link EvaluationResult}
    * @return boolean
    */
-  boolean evaluate(ContextValues attributes);
+  boolean evaluate(DataValues attributes);
 
   ConditionType getType();
 

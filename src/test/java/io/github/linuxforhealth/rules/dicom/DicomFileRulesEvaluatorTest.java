@@ -12,15 +12,17 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import io.github.linuxforhealth.rules.api.RulesEvaluationResult;
+import io.github.linuxforhealth.rules.eval.DicomFileRulesEvaluator;
+import io.github.linuxforhealth.rules.fact.FileFact;
 
-class DicomRulesEvaluatorTest {
+class DicomFileRulesEvaluatorTest {
 
   @TempDir
   File tempFolder;
 
 
   @Test
-  public void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_true()
+  void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_true()
       throws Exception {
     String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
         + "      \"groupid\": \"queue1rules\",\n" + "      \"conditions\": {\n"
@@ -34,15 +36,15 @@ class DicomRulesEvaluatorTest {
     File dcm = new File("src/test/resources/dcmfiles/image-000341.dcm");
 
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(dcm);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+    DicomFileRulesEvaluator eval = new DicomFileRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new FileFact(dcm));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isTrue();
 
   }
 
 
   @Test
-  public void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_false()
+  void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_false()
       throws Exception {
     String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
         + "      \"groupid\": \"queue1rules\",\n" + "      \"conditions\": {\n"
@@ -55,17 +57,17 @@ class DicomRulesEvaluatorTest {
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     File dcm = new File("src/test/resources/dcmfiles/image-000341.dcm");
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
+    DicomFileRulesEvaluator eval = new DicomFileRulesEvaluator(ruleFile);
 
 
-    RulesEvaluationResult results = eval.evaluateRules(dcm);
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isFalse();
+    RulesEvaluationResult results = eval.apply(new FileFact(dcm));
+    assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isFalse();
 
   }
 
   //
   @Test
-  public void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_true_study()
+  void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_true_study()
       throws Exception {
 
     String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
@@ -80,15 +82,15 @@ class DicomRulesEvaluatorTest {
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     File study = new File("src/test/resources/dcmfiles/study");
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
+    DicomFileRulesEvaluator eval = new DicomFileRulesEvaluator(ruleFile);
 
     for (File f : study.listFiles()) {
 
-      RulesEvaluationResult results = eval.evaluateRules(f);
+      RulesEvaluationResult results = eval.apply(new FileFact(f));
       if (f.getName().contains("image-000025")) {
-        assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+        assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isTrue();
       } else {
-        assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isFalse();
+        assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isFalse();
       }
 
     }
@@ -96,7 +98,7 @@ class DicomRulesEvaluatorTest {
   }
 
   @Test
-  public void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_false_study()
+  void evaluate_compound_condition_result_simple_string_type_to_true_with_one_condition_false_study()
       throws Exception {
     String rule = "{\n" + "  \"ruleDefinitions\": [\n" + "    {\n"
         + "      \"groupid\": \"queue1rules\",\n" + "      \"conditions\": {\n"
@@ -110,13 +112,13 @@ class DicomRulesEvaluatorTest {
     FileUtils.writeStringToFile(ruleFile, rule, Charset.defaultCharset());
     File study = new File("src/test/resources/dcmfiles/study");
 
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
+    DicomFileRulesEvaluator eval = new DicomFileRulesEvaluator(ruleFile);
 
     for (File f : study.listFiles()) {
 
-      RulesEvaluationResult results = eval.evaluateRules(f);
+      RulesEvaluationResult results = eval.apply(new FileFact(f));
 
-      assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
+      assertThat(results.getResultOfRule("relevance_rule", "queue1rules").isSuccess()).isTrue();
 
 
     }

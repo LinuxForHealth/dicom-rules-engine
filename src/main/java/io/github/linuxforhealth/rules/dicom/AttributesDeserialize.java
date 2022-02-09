@@ -20,24 +20,27 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.ImmutableList;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 import io.github.linuxforhealth.rules.fact.ListValueType;
 import io.github.linuxforhealth.rules.fact.MapValueType;
 import io.github.linuxforhealth.rules.fact.NullAttribute;
 import io.github.linuxforhealth.rules.fact.ValueType;
 
-public class AttributesDeserialize extends StdDeserializer<ContextValues> {
-  private static final List<String> STRING_VR_TYPES = ImmutableList.of("AE", "AS", "AT", "CS", "DS",
+public class AttributesDeserialize extends StdDeserializer<DataValues> {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -85202262082356465L;
+  private static final List<String> STRING_VR_TYPES = List.of("AE", "AS", "AT", "CS", "DS",
       "LO", "LT", "OB", "OD", "OF", "OW", "PN", "SH", "UI", "UT");
-  private static final List<String> DATE_VR_TYPES = ImmutableList.of("DA");
-  private static final List<String> TIME_VR_TYPES = ImmutableList.of("TM");
-  private static final List<String> DATE_TIME_VR_TYPES = ImmutableList.of("DT");
-  private static final List<String> FLOAT_VR_TYPES = ImmutableList.of("FL", "FD");
-  private static final List<String> INTEGER_VR_TYPES = ImmutableList.of("IS", "SS", "US");
-  private static final List<String> LONG_VR_TYPES = ImmutableList.of("SL", "UL");
+  private static final List<String> DATE_VR_TYPES = List.of("DA");
+  private static final List<String> TIME_VR_TYPES = List.of("TM");
+  private static final List<String> DATE_TIME_VR_TYPES = List.of("DT");
+  private static final List<String> FLOAT_VR_TYPES = List.of("FL", "FD");
+  private static final List<String> INTEGER_VR_TYPES = List.of("IS", "SS", "US");
+  private static final List<String> LONG_VR_TYPES = List.of("SL", "UL");
   private static final List<String> NUMBER_VR_TYPES =
-      ImmutableList.of("SL", "UL", "FL", "FD", "IS", "SS", "US");
+      List.of("SL", "UL", "FL", "FD", "IS", "SS", "US");
 
 
 
@@ -56,13 +59,13 @@ public class AttributesDeserialize extends StdDeserializer<ContextValues> {
   }
 
   @Override
-  public ContextValues deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+  public DataValues deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
     JsonNode node = p.readValueAsTree();
     if (node == null) {
       return null;
     }
-    ContextValues attrs = new ContextValues();
+    DataValues attrs = new DataValues();
     if (node instanceof ObjectNode) {
       ObjectNode objNode = (ObjectNode) node;
       objNode.fields().forEachRemaining(a -> {

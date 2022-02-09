@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import com.google.common.collect.Lists;
-import io.github.linuxforhealth.rules.api.RuleFact;
-import io.github.linuxforhealth.rules.condition.Condition;
+import io.github.linuxforhealth.rules.api.Condition;
 import io.github.linuxforhealth.rules.condition.SimpleBiCondition;
 import io.github.linuxforhealth.rules.condition.SimpleCondition;
+import io.github.linuxforhealth.rules.condition.predicate.RuleBiPredicate;
+import io.github.linuxforhealth.rules.condition.predicate.RulePredicate;
 import io.github.linuxforhealth.rules.condition.variable.SimpleVariable;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
+import io.github.linuxforhealth.rules.fact.DicomAttributeFact;
 import io.github.linuxforhealth.rules.fact.ListValueType;
 import io.github.linuxforhealth.rules.fact.ValueType;
 
@@ -28,19 +30,19 @@ class PredicateForListTypeTest {
   @Test
   public void test_anycontain_operator_evaluated() {
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_CONTAINS, "SR");
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
   }
 
 
-  private ContextValues generateFact(String key, ValueType value) {
-    ContextValues attrs = new ContextValues();
+  private DataValues generateFact(String key, ValueType value) {
+    DataValues attrs = new DataValues();
     attrs.addValue(key, value);
     return attrs;
 
@@ -51,11 +53,11 @@ class PredicateForListTypeTest {
   @Test
   public void test_any_equal_true_case() {
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SR"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SR"))));
     Condition tDicomRuleCondition =
         new SimpleBiCondition(new SimpleVariable("(0020,1206)"), RuleBiPredicate.ANY_EQUALS, "SR");
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -64,11 +66,11 @@ class PredicateForListTypeTest {
   @Test
   public void test_any_equal_false_case() {
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
     Condition tDicomRuleCondition =
         new SimpleBiCondition(new SimpleVariable("(0020,1206)"), RuleBiPredicate.ANY_EQUALS, "SR");
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isEqualTo(false);
 
 
@@ -78,11 +80,11 @@ class PredicateForListTypeTest {
   @Test
   public void test_any_not_equal_operator_false_case() {
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_NOT_EQUALS, "SRT");
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isEqualTo(false);
 
   }
@@ -92,11 +94,11 @@ class PredicateForListTypeTest {
   @Test
   public void test_any_not_equal_operator_true_case() {
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_NOT_EQUALS, "SR");
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -112,11 +114,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SRT"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_IN_EQUALS, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isEqualTo(false);
 
 
@@ -133,11 +135,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SR"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("SR"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_IN_EQUALS, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -154,11 +156,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("FT"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("FT"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_NOT_IN_EQUALS, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -174,11 +176,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CTR"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CTR"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_NOT_IN_EQUALS, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -195,11 +197,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CTR"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CTR"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_IN_CONTAINS, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -216,11 +218,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CTR"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CTR"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_IN_CONTAINS, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -237,11 +239,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("C"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("C"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.ANY_NOT_IN_CONTAINS, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -251,11 +253,11 @@ class PredicateForListTypeTest {
   @Test
   public void test_list_is_empty_false() {
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("ggt"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("ggt"))));
     Condition tDicomRuleCondition =
         new SimpleCondition(new SimpleVariable("(0020,1206)"), RulePredicate.IS_EMPTY);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isFalse();
 
 
@@ -264,11 +266,11 @@ class PredicateForListTypeTest {
   @Test
   public void test_list_is_empty_true() {
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList())));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList())));
     Condition tDicomRuleCondition =
         new SimpleCondition(new SimpleVariable("(0020,1206)"), RulePredicate.IS_EMPTY);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
 
     assertThat(tConditionEvaluated).isTrue();
 
@@ -276,11 +278,11 @@ class PredicateForListTypeTest {
 
   @Test
   public void test_list_is_not_empty() {
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("GDR"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("GDR"))));
     Condition tDicomRuleCondition =
         new SimpleCondition(new SimpleVariable("(0020,1206)"), RulePredicate.IS_NOT_EMPTY);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -297,11 +299,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact =
-        new RuleFact(generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("C"))));
+    DicomAttributeFact fact = new DicomAttributeFact("",
+        generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("C"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.NOT_CONTAINS_ANY, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -319,11 +321,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact = new RuleFact(
+    DicomAttributeFact fact = new DicomAttributeFact("",
         generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CT", "US", "SR", "HY"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.NOT_CONTAINS_ANY, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isFalse();
 
 
@@ -341,11 +343,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact = new RuleFact(
+    DicomAttributeFact fact = new DicomAttributeFact("",
         generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CT", "US", "SR", "HY"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.CONTAINS_ALL, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isTrue();
 
 
@@ -363,11 +365,11 @@ class PredicateForListTypeTest {
     tModalityList.add("US");
     tModalityList.add("SR");
 
-    RuleFact fact = new RuleFact(
+    DicomAttributeFact fact = new DicomAttributeFact("",
         generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CT", "US"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.CONTAINS_ALL, tModalityList);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
     assertThat(tConditionEvaluated).isFalse();
 
 
@@ -378,11 +380,11 @@ class PredicateForListTypeTest {
   @Test
   public void test_list_size_equal() {
 
-    RuleFact fact = new RuleFact(
+    DicomAttributeFact fact = new DicomAttributeFact("",
         generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CT", "US"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.LIST_SIZE_EQUAL, 2);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
 
     assertThat(tConditionEvaluated).isTrue();
 
@@ -390,11 +392,11 @@ class PredicateForListTypeTest {
 
   @Test
   public void test_list_size_greater_than_false() {
-    RuleFact fact = new RuleFact(
+    DicomAttributeFact fact = new DicomAttributeFact("",
         generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CT", "US"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.LIST_SIZE_GREATER_THAN, 3);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
 
     assertThat(tConditionEvaluated).isFalse();
 
@@ -404,11 +406,11 @@ class PredicateForListTypeTest {
 
   @Test
   public void test_list_size_greater_than_true() {
-    RuleFact fact = new RuleFact(
+    DicomAttributeFact fact = new DicomAttributeFact("",
         generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CT", "US"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.LIST_SIZE_GREATER_THAN, 1);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
 
     assertThat(tConditionEvaluated).isTrue();
 
@@ -419,11 +421,11 @@ class PredicateForListTypeTest {
 
   @Test
   public void test_list_size_less_than() {
-    RuleFact fact = new RuleFact(
+    DicomAttributeFact fact = new DicomAttributeFact("",
         generateFact("(0020,1206)", new ListValueType(Lists.newArrayList("CT", "US"))));
     Condition tDicomRuleCondition = new SimpleBiCondition(new SimpleVariable("(0020,1206)"),
         RuleBiPredicate.LIST_SIZE_LESS_THAN, 3);
-    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getData());
+    boolean tConditionEvaluated = tDicomRuleCondition.evaluate(fact.getValue());
 
     assertThat(tConditionEvaluated).isTrue();
 
