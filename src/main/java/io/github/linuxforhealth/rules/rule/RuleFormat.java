@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package io.github.linuxforhealth.rules.api;
+package io.github.linuxforhealth.rules.rule;
 
-public enum Format {
+public enum RuleFormat {
   JSON, YAML;
 
 }

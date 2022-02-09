@@ -8,11 +8,11 @@ package io.github.linuxforhealth.rules.dicom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 import io.github.linuxforhealth.rules.fact.ValueType;
 
 
-public class DICOMAttributes extends ContextValues {
+public class DICOMAttributes extends DataValues {
 
   private Map<String, ValueType> values;
 

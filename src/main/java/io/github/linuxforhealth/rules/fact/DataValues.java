@@ -10,26 +10,27 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
-public class ContextValues implements ValueType {
+
+public class DataValues implements ValueType {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataValues.class);
 
 
-  protected Map<String, ValueType> values;
 
-  public ContextValues() {
+  private Map<String, ValueType> values;
+
+  public DataValues() {
     this(new HashMap<>());
 
   }
 
-  public ContextValues(Map<String, ValueType> values) {
+  public DataValues(Map<String, ValueType> values) {
     Preconditions.checkArgument(values != null, "input map of values caannot be null");
-
     this.values = new HashMap<>();
-    if (values != null) {
-      this.values.putAll(values);
-    }
-
+    this.values.putAll(values);
 
   }
 
@@ -41,7 +42,9 @@ public class ContextValues implements ValueType {
 
 
   public Optional<ValueType> getValue(String name) {
-    return Optional.ofNullable(values.get(name));
+    Optional<ValueType> val = Optional.ofNullable(values.get(name));
+    LOGGER.debug("Returning value: {} for {} ", val, name);
+    return val;
 
   }
 

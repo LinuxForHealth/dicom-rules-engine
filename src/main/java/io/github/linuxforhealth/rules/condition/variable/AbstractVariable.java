@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.ClassUtils;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 
 
 /**
@@ -26,7 +26,7 @@ abstract class AbstractVariable implements Variable {
 
 
   @Override
-  public List<Object> extractVariableValue(ContextValues attributes, Class<?> klass) {
+  public List<Object> extractVariableValue(DataValues attributes, Class<?> klass) {
     Optional<Object> value = fetchValue(attributes, klass);
     if (value.isEmpty()) {
       return new ArrayList<>();
@@ -36,7 +36,7 @@ abstract class AbstractVariable implements Variable {
   }
 
 
-  protected abstract Optional<Object> fetchValue(ContextValues attributes, Class<?> klass);
+  protected abstract Optional<Object> fetchValue(DataValues attributes, Class<?> klass);
 
   protected List<Object> getValue(Object value, Class<?> klass) {
     List<Object> values = new ArrayList<>();

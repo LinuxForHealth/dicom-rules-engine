@@ -45,69 +45,32 @@ Gradle dependency:
 ```     
 
 
-### Usage
-Example sample rule file:
-
-
-```json
-{
-  "ruleDefinitions": [
-    {
-      "groupid": "queue1rules",
-      "conditions": {
-        "condition1": "$00080018 EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150800481.27482048.30798145",
-        "condition2": "$0020000E EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150758591.96842950.07877442"
-            },
-      "rules": {
-        "relevance_rule": "condition1 && condition2"
-      }
-    }
-  ]
-}
-```
-If rules are stored in rules file, example:rules.json
-
-```
-    File ruleFile = new File(<path to rules.json>);
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(ruleFile);
-    RulesEvaluationResult results = eval.evaluateRules(study); // provide path to DICOM study directory
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
-
-```
-
-If JSON representation of rules are read and stored in String object rulesDefination
-
-```
-   
-    DicomRulesEvaluator eval = new DicomRulesEvaluator(rulesDefination, Format.JSON);
-    RulesEvaluationResult results = eval.evaluateRules(study); // provide path to DICOM study directory
-    assertThat(results.getResultOfRule("queue1rules", "relevance_rule")).isTrue();
-
-```
-
 
 # Introduction:
-The purpose of the rule engine is to provide mechanism to specify conditions to identify /filter DICOM studies for conditional processing based on preconfigured rules. 
-The rule will evaluate a DICOM study and return the evaluation result.
+The purpose of the rule engine is to provide mechanism to specify conditions to identify /filter DICOM studies for conditional processing based on pre-configured rules. The rule will evaluate a DICOM file and return the evaluation result. There are different types of rules evaluator for different types of DICOM data.
+* BasicRulesEvaluator -- can be used if provided DICOM data is as List of attributes (check DicomAttributeFact) 
+* DicomFileRulesEvaluator -- can be used if provided DICOM data is DCM file (check FileFact)
+* DicomJsonRulesEvaluator-- can be used if provided DICOM data is in JSON format (check DicomJsonFact)
+* DicomStreamRulesEvaluator-- can be used if provided DICOM data is inputstream from DCM file (check InputStreamFact)
 
 ### DICOM rules have following concepts
  * Rule Definition: is a collection of rules and conditions.
- * Rule Group Id: unique lable for group of rules using common conditions.
+ * Rule Group Id: unique label for group of rules using common conditions.
  * Condition - Condition evaluates a single DICOM tag against a predefined predicate. 
  * Rule – Rule is collection of conditions joined with AND/ORs.
  * RuleEvaluationResult: This object holds the results of the rules evaluation. The rules evaluator evaluates all rules defined in the rules definition file. 
 
  
 ## How to create and configure rules
-* Rules for the engine ccan be defined in a JSON or YAML file.
+* Rules for the engine can be defined in a JSON or YAML file.
 * Each rule has the following attributes.
     
 ## Structure of a DICOM Rule
-    * groupid: (REQUIRED) unique lable (no spaces aallowed)
+    * groupid: (REQUIRED) unique label (no spaces allowed)
     * attribute_name_delimiter: (OPTIONAL) character used to split nested attributes, example 000982335.000982333
     * conditions: Map of conditions. <Unique name>:<condition>
        - Condition: Condition can be of two types, BiCondition or SimpleCondition. BiCondition has variable, predicate and constant value for maatching.
-           Variable always staarts with a '$'. Simple condition only has a variable and predicate.
+           Variable always starts with a '$'. Simple condition only has a variable and predicate.
     * rules:  this is map of rules. <unique ruleIdentifier>:<rule>
       - Rule: Each rule is defined using conditions, where conditions are joined using &&/|| and can be nested using ().   
 
@@ -166,5 +129,47 @@ The rule will evaluate a DICOM study and return the evaluation result.
     * NOT_CONTAINS_ALL- List of values for a DICOM tag not contain (ignore case) all the values provided in the rule.
     * CONTAINS_ALL- List of values for a DICOM tag contain (match is case sensitive) all the values provided in the rule.
     
+### Usage
+Example sample rule file: 
+
+
+```json
+{
+  "ruleDefinitions": [
+    {
+      "groupid": "queue1rules",
+      "conditions": {
+        "condition1": "$00080018 EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150800481.27482048.30798145",
+        "condition2": "$0020000E EQUALS 1.2.826.0.1.3680043.8.1055.1.20111102150758591.96842950.07877442"
+            },
+      "rules": {
+        "relevance_rule": "condition1 && condition2"
+      }
+    }
+  ]
+}
+```
+If rules are stored in rules file, example:rules.json
+
+```
+    File ruleFile = new File(<path to rules.json>);
+    DicomFileRulesEvaluator eval = new DicomFileRulesEvaluator(ruleFile);
+    RulesEvaluationResult results = eval.apply(new FileFact(dcm)); // provide path to DICOM File 
+    assertThat(results.getResultOfRule("relevance_rule").isSuccess()).isTrue();
+    
+    
+
+```
+
+If JSON representation of rules are read and stored in String object rulesDefination
+
+```
+   
+    DicomFileRulesEvaluator eval = new DicomFileRulesEvaluator(rulesDefination, Format.JSON);
+    RulesEvaluationResult results = eval.apply(new FileFact(dcm)); // provide path to DICOM File 
+    assertThat(results.getResultOfRule("relevance_rule").isSuccess()).isTrue();
+
+```
+
 
 

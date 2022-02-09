@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import io.github.linuxforhealth.rules.condition.Constants;
 import io.github.linuxforhealth.rules.condition.Specification;
 import io.github.linuxforhealth.rules.condition.VariableUtils;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 import io.github.linuxforhealth.rules.fact.ListValueType;
 import io.github.linuxforhealth.rules.fact.MapValueType;
 import io.github.linuxforhealth.rules.fact.ValueType;
@@ -63,15 +63,15 @@ public class NestedVariable extends AbstractVariable {
 
 
   @Override
-  public Optional<ValueType> extractAttribute(ContextValues attributes) {
+  public Optional<ValueType> extractAttribute(DataValues attributes) {
     return Optional.ofNullable(fetchAttribute(attributes, this.specs));
   }
 
 
 
-  public ValueType fetchAttribute(ContextValues attributes, List<Specification> specs) {
+  public ValueType fetchAttribute(DataValues attributes, List<Specification> specs) {
 
-    ContextValues temp = attributes;
+    DataValues temp = attributes;
     List<Specification> localSpecs = new ArrayList<>(specs);
 
     ValueType v = null;
@@ -90,7 +90,7 @@ public class NestedVariable extends AbstractVariable {
         for (Object item : listAttr.getValue()) {
           if (item instanceof MapValueType) {
             MapValueType mapAttr = (MapValueType) item;
-            temp = new ContextValues(mapAttr.getValue());
+            temp = new DataValues(mapAttr.getValue());
 
             ValueType optionalValue = fetchAttribute(temp, tempSpecs);
             if (optionalValue != null) {
@@ -103,7 +103,7 @@ public class NestedVariable extends AbstractVariable {
 
       } else if (v instanceof MapValueType) {
         MapValueType mapAttr = (MapValueType) v;
-        temp = new ContextValues(mapAttr.getValue());
+        temp = new DataValues(mapAttr.getValue());
         v = fetchAttribute(temp, localSpecs);
         extracted = true;
       } else {
@@ -117,7 +117,7 @@ public class NestedVariable extends AbstractVariable {
   }
 
 
-  private ValueType getValueFromSpec(Specification s, ContextValues temp) {
+  private ValueType getValueFromSpec(Specification s, DataValues temp) {
 
     Optional<ValueType> att = s.getAttribute(temp, null);
     if (att.isPresent()) {
@@ -130,7 +130,7 @@ public class NestedVariable extends AbstractVariable {
 
 
   @Override
-  protected Optional<Object> fetchValue(ContextValues attributes, Class<?> klass) {
+  protected Optional<Object> fetchValue(DataValues attributes, Class<?> klass) {
     Optional<ValueType> optionalAttr = extractAttribute(attributes);
     Object value = null;
     if (optionalAttr.isPresent()) {

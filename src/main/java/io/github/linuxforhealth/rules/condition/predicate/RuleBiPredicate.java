@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package io.github.linuxforhealth.rules.conditions.predicate;
+package io.github.linuxforhealth.rules.condition.predicate;
 
 import java.util.Collection;
 import java.util.function.BiPredicate;

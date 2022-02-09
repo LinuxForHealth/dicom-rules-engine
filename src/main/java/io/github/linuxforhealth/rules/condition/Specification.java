@@ -8,8 +8,7 @@ package io.github.linuxforhealth.rules.condition;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.fact.DataValues;
 import io.github.linuxforhealth.rules.fact.ListValueType;
 import io.github.linuxforhealth.rules.fact.MapValueType;
 import io.github.linuxforhealth.rules.fact.ValueType;
@@ -42,11 +41,11 @@ public class Specification {
   }
 
 
-  public Optional<ValueType> getAttribute(ContextValues attributes, String group) {
-    ContextValues context = attributes;
+  public Optional<ValueType> getAttribute(DataValues attributes, String group) {
+    DataValues context = attributes;
     if (group != null) {
       MapValueType map = attributes.getGroup(group).orElse(new MapValueType(new HashMap<>()));
-      context = new ContextValues(map.getValue());
+      context = new DataValues(map.getValue());
 
     }
 
@@ -70,7 +69,9 @@ public class Specification {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("spec", spec).append("index", index).toString();
+    return "Specification [spec=" + spec + ", index=" + index + "]";
   }
+
+
 
 }

@@ -5,10 +5,10 @@
  */
 package io.github.linuxforhealth.rules.condition;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.github.linuxforhealth.rules.fact.ContextValues;
+import io.github.linuxforhealth.rules.api.Condition;
+import io.github.linuxforhealth.rules.fact.DataValues;
 
 public class CompositeCondition implements Condition {
   private static final Logger LOGGER = LoggerFactory.getLogger(CompositeCondition.class);
@@ -27,7 +27,7 @@ public class CompositeCondition implements Condition {
 
 
   @Override
-  public boolean evaluate(ContextValues attributes) {
+  public boolean evaluate(DataValues attributes) {
     boolean eval;
     if (CompositionType.AND == conditionOperator) {
       eval = condition1.evaluate(attributes) && condition2.evaluate(attributes);
@@ -52,11 +52,14 @@ public class CompositeCondition implements Condition {
     return ConditionType.COMPOSITE_CONDITION;
   }
 
+
+
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("Condition-1", condition1)
-        .append("CompositionType", conditionOperator).append("Condition-2", condition1).toString();
+    return "CompositeCondition [condition1=" + condition1 + ", condition2=" + condition2
+        + ", conditionOperator=" + conditionOperator + "]";
   }
+
 
 
 

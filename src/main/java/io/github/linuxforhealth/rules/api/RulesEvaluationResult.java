@@ -5,13 +5,9 @@
  */
 package io.github.linuxforhealth.rules.api;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import com.google.common.base.Preconditions;
+import io.github.linuxforhealth.rules.util.RulesUtils;
 
 /**
  * This class holds details on what all rules were evaluated on a fact and what is the outcome of
@@ -24,9 +20,11 @@ import com.google.common.base.Preconditions;
 
 public class RulesEvaluationResult {
 
-  private Map<String, Set<String>> ruleSuccessResults;
-  private Map<String, Set<String>> ruleFailureResults;
-  private Map<String, Map<String, Throwable>> exceptions;
+  private Map<String, RuleEvaluationResult> ruleSuccessResults;
+  private Map<String, RuleEvaluationResult> ruleFailureResults;
+  private Map<String, RuleEvaluationResult> exceptions;
+
+
 
   public RulesEvaluationResult() {
     this.ruleSuccessResults = new ConcurrentHashMap<>();
@@ -45,138 +43,49 @@ public class RulesEvaluationResult {
   }
 
 
+  /**
+   * Rule id is combination of rule name and groupId
+   * 
+   * @param ruleId
+   * @return {@link RuleEvaluationResult}
+   */
+  public RuleEvaluationResult getResultOfRule(String ruleId) {
 
-  public Boolean getResultOfRule(String parentRuleGroup, String ruleId) {
-
-    Set<String> groupSuccessResults = ruleSuccessResults.get(parentRuleGroup);
-
-    if (groupSuccessResults != null && groupSuccessResults.contains(ruleId)) {
-      return true;
+    RuleEvaluationResult success = ruleSuccessResults.get(ruleId);
+    if (success != null) {
+      return success;
     }
-    Set<String> groupFailureResults = ruleFailureResults.get(parentRuleGroup);
-    if (groupFailureResults != null && groupFailureResults.contains(ruleId)) {
-      return false;
+
+    RuleEvaluationResult failure = ruleFailureResults.get(ruleId);
+    if (failure != null) {
+      return failure;
     }
 
-    return null;
+    RuleEvaluationResult exception = exceptions.get(ruleId);
+    if (exception != null) {
+      return exception;
+    }
+
+
+    throw new IllegalArgumentException("no results for rule :" + ruleId);
   }
 
 
-
-  public Map<String, Map<String, Throwable>> getExceptions() {
-    return new HashMap<>(exceptions);
-  }
-
-  public Map<String, Set<String>> getRuleSuccessResults() {
-    return new HashMap<>(ruleSuccessResults);
-  }
-
-
-
-  public Map<String, Set<String>> getRuleFailureResults() {
-    return new HashMap<>(ruleFailureResults);
-  }
-
-  void addExceptions(String parentRuleGroup, String ruleId, Throwable exception) {
-
-    Map<String, Throwable> groupResults = exceptions.get(parentRuleGroup);
-    if (groupResults == null) {
-      groupResults = new ConcurrentHashMap<>();
-      exceptions.put(parentRuleGroup, groupResults);
-    }
-    groupResults.put(ruleId, exception);
-  }
-
-  void addResultOfRule(String parentRuleGroup, String ruleId, boolean result) {
-
-    if (result) {
-      Set<String> groupSuccessResults = ruleSuccessResults.get(parentRuleGroup);
-      if (groupSuccessResults == null) {
-        groupSuccessResults = new ConcurrentHashMap<>().newKeySet();
-        ruleSuccessResults.put(parentRuleGroup, groupSuccessResults);
-      }
-      groupSuccessResults.add(ruleId);
-
-
-    } else {
-      Set<String> groupFailureResults = ruleFailureResults.get(parentRuleGroup);
-      if (groupFailureResults == null) {
-        groupFailureResults = new ConcurrentHashMap<>().newKeySet();
-        ruleFailureResults.put(parentRuleGroup, groupFailureResults);
-      }
-      groupFailureResults.add(ruleId);
-
-    }
-
-
-  }
-
-
-  public static RulesEvaluationResult aggregate(RulesEvaluationResult a, RulesEvaluationResult b) {
-    Preconditions.checkArgument(a != null, "RulesEvaluationResult a  cannot be null.");
-    Preconditions.checkArgument(b != null, "RulesEvaluationResult b cannot be null.");
-
-    if (a.isEmpty()) {
-      return new RulesEvaluationResult(b);
-    }
-    if (b.isEmpty()) {
-      return new RulesEvaluationResult(a);
-    }
-
-    RulesEvaluationResult aggr = new RulesEvaluationResult(a);
-
-
-
-    for (Entry<String, Set<String>> e : b.ruleFailureResults.entrySet()) {
-      Set<String> tempCopy = new HashSet<>(e.getValue());
-      if (aggr.ruleSuccessResults.get(e.getKey()) != null) {
-        tempCopy.removeAll(aggr.ruleSuccessResults.get(e.getKey()));
-      }
-
-      Set<String> temp = aggr.ruleFailureResults.get(e.getKey());
-      if (temp == null) {
-        temp = new ConcurrentHashMap<>().newKeySet();
-        aggr.ruleFailureResults.put(e.getKey(), temp);
-      }
-      temp.addAll(tempCopy);
-
-
-    }
-
-
-    for (Entry<String, Set<String>> e : b.ruleSuccessResults.entrySet()) {
-      Set<String> tempF = aggr.ruleFailureResults.get(e.getKey());
-      if (tempF != null) {
-        tempF.removeAll(e.getValue());
-      }
-
-      Set<String> temp = aggr.ruleSuccessResults.get(e.getKey());
-      if (temp == null) {
-        temp = new ConcurrentHashMap<>().newKeySet();
-        aggr.ruleSuccessResults.put(e.getKey(), temp);
-      }
-      temp.addAll(e.getValue());
-
-
-    }
-
-
-
-    for (Entry<String, Map<String, Throwable>> e : b.getExceptions().entrySet()) {
-      Map<String, Throwable> temp = aggr.exceptions.get(e.getKey());
-      if (temp == null) {
-        temp = new ConcurrentHashMap<>();
-      }
-      temp.putAll(e.getValue());
-    }
-
-    return aggr;
+  /**
+   * Rule id is combination of rule name and groupId
+   * 
+   * @param rulename
+   * @param groupid
+   * @return {@link RuleEvaluationResult}
+   */
+  public RuleEvaluationResult getResultOfRule(String rulename, String groupid) {
+    return getResultOfRule(RulesUtils.getRuleIdentifier(rulename, groupid));
 
   }
 
 
 
-  private boolean isEmpty() {
+  public boolean isEmpty() {
     return this.ruleFailureResults.isEmpty() && this.ruleSuccessResults.isEmpty()
         && this.exceptions.isEmpty();
   }
@@ -185,6 +94,45 @@ public class RulesEvaluationResult {
 
   public boolean hasFailedRules() {
     return !(this.ruleFailureResults.isEmpty() && this.getExceptions().isEmpty());
+  }
+
+  public Map<String, RuleEvaluationResult> getRuleFailureResults() {
+    return ruleFailureResults;
+  }
+
+
+
+  public Map<String, RuleEvaluationResult> getExceptions() {
+    return exceptions;
+  }
+
+
+
+
+
+
+  public RuleEvaluationResult add(RuleEvaluationResult res) {
+    if (res.getException() != null) {
+      this.exceptions.put(res.getRuleIdentifier(), res);
+    } else if (res.isSuccess()) {
+      this.ruleSuccessResults.put(res.getRuleIdentifier(), res);
+    } else {
+      this.ruleFailureResults.put(res.getRuleIdentifier(), res);
+    }
+    return res;
+  }
+
+
+  public Map<String, RuleEvaluationResult> getRuleSuccessResults() {
+    return ruleSuccessResults;
+  }
+
+
+
+  @Override
+  public String toString() {
+    return "RulesEvaluationResult [ruleSuccessResults=" + ruleSuccessResults
+        + ", ruleFailureResults=" + ruleFailureResults + ", exceptions=" + exceptions + "]";
   }
 
 
