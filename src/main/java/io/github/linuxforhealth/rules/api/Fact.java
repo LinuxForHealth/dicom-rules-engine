@@ -17,10 +17,6 @@ public interface Fact<T> {
    */
   T getValue();
 
-  // void putResultOfRule(String parentGroupLable, String ruleName, boolean result);
-
-  // void addExceptions(String parentGroupLable, String ruleName, Exception e);
-
 
 
 

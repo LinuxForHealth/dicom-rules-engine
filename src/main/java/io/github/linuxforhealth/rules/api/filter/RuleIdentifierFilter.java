@@ -1,4 +1,8 @@
-
+/*
+ * (C) Copyright IBM Corp. 2021
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package io.github.linuxforhealth.rules.api.filter;
 
 import org.apache.commons.lang3.StringUtils;

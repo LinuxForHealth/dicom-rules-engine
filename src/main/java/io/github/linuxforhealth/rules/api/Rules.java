@@ -1,4 +1,8 @@
-
+/*
+ * (C) Copyright IBM Corp. 2021
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package io.github.linuxforhealth.rules.api;
 
 
@@ -90,7 +94,7 @@ public class Rules<T> {
   }
 
   public List<Rule<T>> getRules(RuleFilter filter) {
-    return this.ruleList.values().stream().filter(r -> filter.test(r))
+    return this.ruleList.values().stream().filter(filter::test)
         .collect(Collectors.toUnmodifiableList());
   }
 }
