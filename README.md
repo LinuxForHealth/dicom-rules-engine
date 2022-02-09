@@ -27,7 +27,7 @@ Library Coordinates
 ```
 groupId = io.github.linuxforhealth
 artifactId = dicom-rules-engine
-version = 1.0.0-alpha
+version = 1.0.2
 ```
 
 Maven dependency
@@ -35,13 +35,13 @@ Maven dependency
 <dependency>
   <groupId>io.github.linuxforhealth</groupId>
   <artifactId>dicom-rules-engine</artifactId>
-  <version>1.0.0-alpha</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
 Gradle dependency:
 ```
-    implementation 'io.github.linuxforhealth:dicom-rules-engine:1.0.0-alpha'
+    implementation 'io.github.linuxforhealth:dicom-rules-engine:1.0.2'
 ```     
 
 
