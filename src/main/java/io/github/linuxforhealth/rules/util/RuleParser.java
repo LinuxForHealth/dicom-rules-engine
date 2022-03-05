@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Preconditions;
 import io.github.linuxforhealth.rules.rule.RuleDef;
@@ -21,6 +22,9 @@ public class RuleParser {
 
 
   public static List<RuleDef> loadRulesFromFile(File file) {
+    if (file == null) {
+      return List.of();
+    }
     TypeReference<RulesConfiguration> typeref = new TypeReference<RulesConfiguration>() {};
     RulesConfiguration rulesConfigurations = null;
     if (FilenameUtils.isExtension(file.getName(), "json")) {
@@ -39,6 +43,9 @@ public class RuleParser {
 
 
   public static List<RuleDef> loadRules(String rules, RuleFormat format) {
+    if (StringUtils.isBlank(rules)) {
+      return List.of();
+    }
     if (format == RuleFormat.JSON) {
       return loadRulesFromJson(rules);
     } else if (format == RuleFormat.YAML) {
@@ -50,8 +57,10 @@ public class RuleParser {
   }
 
   public static List<RuleDef> loadRulesFromJson(String json) {
+    if (StringUtils.isBlank(json)) {
+      return List.of();
+    }
     TypeReference<RulesConfiguration> typeref = new TypeReference<RulesConfiguration>() {};
-
 
     try {
       RulesConfiguration conf = ObjectMapperUtil.getJSONInstance().readValue(json, typeref);
@@ -66,9 +75,10 @@ public class RuleParser {
 
 
   public static List<RuleDef> loadRulesFromYaml(String yaml) {
+    if (StringUtils.isBlank(yaml)) {
+      return List.of();
+    }
     TypeReference<RulesConfiguration> typeref = new TypeReference<RulesConfiguration>() {};
-
-
     try {
       RulesConfiguration conf = ObjectMapperUtil.getYAMLInstance().readValue(yaml, typeref);
       return conf.getRules();
@@ -82,7 +92,43 @@ public class RuleParser {
 
 
 
-  private static RulesConfiguration readFromJsonFile(File file,
+  public static RulesConfiguration loadRulesConfigurationFromJson(String json) {
+    if (StringUtils.isBlank(json)) {
+      return null;
+    }
+    TypeReference<RulesConfiguration> typeref = new TypeReference<RulesConfiguration>() {};
+
+    try {
+      return ObjectMapperUtil.getJSONInstance().readValue(json, typeref);
+
+    } catch (IOException e) {
+      throw new IllegalArgumentException(
+          "Json parsing exception when trying to read data : " + json, e);
+    }
+
+  }
+
+
+
+  public static RulesConfiguration loadRulesConfigurationFromYaml(String yaml) {
+    if (StringUtils.isBlank(yaml)) {
+      return null;
+    }
+    TypeReference<RulesConfiguration> typeref = new TypeReference<RulesConfiguration>() {};
+    try {
+      return ObjectMapperUtil.getYAMLInstance().readValue(yaml, typeref);
+
+    } catch (IOException e) {
+      throw new IllegalArgumentException(
+          "Json parsing exception when trying to read data : " + yaml, e);
+    }
+
+
+  }
+
+
+
+  public static RulesConfiguration readFromJsonFile(File file,
       TypeReference<RulesConfiguration> typeref) {
     Preconditions.checkArgument(file != null, "file cannot be null");
 
@@ -96,7 +142,7 @@ public class RuleParser {
   }
 
 
-  private static RulesConfiguration readFromYamlFile(File file,
+  public static RulesConfiguration readFromYamlFile(File file,
       TypeReference<RulesConfiguration> typeref) {
     Preconditions.checkArgument(file != null, "file cannot be null");
 
