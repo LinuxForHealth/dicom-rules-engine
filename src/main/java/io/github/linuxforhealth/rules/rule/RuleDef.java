@@ -39,6 +39,9 @@ public class RuleDef {
   private Map<String, Condition> conditions;
   private Map<String, Condition> rules;
   private Set<String> attributNames;
+
+
+
   private String attributeNameDelimiter;
 
 
@@ -182,6 +185,14 @@ public class RuleDef {
 
   public String getGroupId() {
     return this.groupId;
+  }
+
+  public Map<String, Condition> getConditions() {
+    return conditions;
+  }
+
+  public String getAttributeNameDelimiter() {
+    return attributeNameDelimiter;
   }
 
 
