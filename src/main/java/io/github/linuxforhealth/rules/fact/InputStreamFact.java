@@ -7,6 +7,7 @@ package io.github.linuxforhealth.rules.fact;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.dcm4che3.util.SafeClose;
 import io.github.linuxforhealth.rules.api.Fact;
 import io.github.linuxforhealth.rules.dicom.DICOMReader;
 
@@ -49,9 +50,8 @@ public class InputStreamFact implements Fact<InputStream>, AutoCloseable {
   }
 
   @Override
-  public void close() throws Exception {
-    this.inputStream.close();
-
+  public void close() {
+    SafeClose.close(inputStream);
   }
 
 
